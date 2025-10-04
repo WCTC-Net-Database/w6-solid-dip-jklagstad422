@@ -2,6 +2,7 @@
 {
     public interface IFlyable
     {
-        public void Fly();
+        void Fly();
+        void PerformSpecialAction();
     }
 }

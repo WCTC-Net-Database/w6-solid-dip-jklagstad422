@@ -1,72 +1,75 @@
+using System.IO;
+using System.Linq;
 using System.Text.Json;
+using System.Collections.Generic;
+using W6_assignment_template.Interfaces;
 using W6_assignment_template.Models;
 
 namespace W6_assignment_template.Data
 {
+    
     public class DataContext : IContext
     {
-        public List<CharacterBase> Characters { get; set; }  // Generalized to store all character types
+        
+        private List<CharacterBase> _internalCharacters { get; set; } = new List<CharacterBase>();
 
-        private readonly JsonSerializerOptions options;
+    
+        public IEnumerable<ICharacter> Characters => _internalCharacters.AsEnumerable();
+        public IRoom StartingRoom { get; }
+
+        private readonly JsonSerializerOptions _options;
 
         public DataContext()
         {
-            options = new JsonSerializerOptions
+   
+            StartingRoom = new Room("The Old Library", "Dust motes dance in the faded light.");
+
+            _options = new JsonSerializerOptions
             {
-                Converters = { new CharacterBaseConverter() },
+                WriteIndented = true,
                 PropertyNameCaseInsensitive = true,
-                WriteIndented = true
+              
             };
 
             LoadData();
+
+            if (!_internalCharacters.Any())
+            {
+                InitializeNewGame();
+            }
+        }
+
+        private void InitializeNewGame()
+        {
+            _internalCharacters.Add(new Player("Aragorn", 100, 5, StartingRoom));
+            _internalCharacters.Add(new Goblin(50, 1, StartingRoom));
+            _internalCharacters.Add(new Ghost(75, 3, StartingRoom));
+            SaveData();
         }
 
         private void LoadData()
         {
+            if (!File.Exists("Files/input.json")) return;
+
             var jsonData = File.ReadAllText("Files/input.json");
-            Characters = JsonSerializer.Deserialize<List<CharacterBase>>(jsonData, options); // Load all character types
+
+      
+            var loadedCharacters = JsonSerializer.Deserialize<List<CharacterBase>>(jsonData, _options);
+
+            _internalCharacters = loadedCharacters ?? new List<CharacterBase>();
         }
 
+     
         public void AddCharacter(CharacterBase character)
         {
-            Characters.Add(character);
+            _internalCharacters.Add(character);
             SaveData();
-        }
-
-        public void UpdateCharacter(CharacterBase character)
-        {
-            var existingCharacter = Characters.FirstOrDefault(c => c.Name == character.Name);
-            if (existingCharacter != null)
-            {
-                existingCharacter.Level = character.Level;
-                existingCharacter.HP = character.HP;
-
-                if (existingCharacter is Player player && character is Player updatedPlayer)
-                {
-                    player.Gold = updatedPlayer.Gold;  // Specific to Player
-                }
-                if (existingCharacter is Goblin goblin && character is Goblin updatedGoblin)
-                {
-                    goblin.Treasure = updatedGoblin.Treasure;  // Specific to Goblin
-                }
-
-                SaveData();
-            }
-        }
-
-        public void DeleteCharacter(string characterName)
-        {
-            var character = Characters.FirstOrDefault(c => c.Name == characterName);
-            if (character != null)
-            {
-                Characters.Remove(character);
-                SaveData();
-            }
         }
 
         private void SaveData()
         {
-            var jsonData = JsonSerializer.Serialize(Characters, options);
+   
+            var jsonData = JsonSerializer.Serialize(_internalCharacters, _options);
             File.WriteAllText("Files/input.json", jsonData);
         }
     }

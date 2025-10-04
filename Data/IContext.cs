@@ -1,16 +1,10 @@
-using W6_assignment_template.Models;
+using System.Collections.Generic;
 
-namespace W6_assignment_template.Data
+namespace W6_assignment_template.Interfaces
 {
     public interface IContext
     {
-        List<CharacterBase> Characters { get; set; }
-
-        void AddCharacter(CharacterBase character);
-
-        void UpdateCharacter(CharacterBase character);
-
-        void DeleteCharacter(string characterName);
-
+        IEnumerable<ICharacter> Characters { get; }
+        IRoom StartingRoom { get; }
     }
 }

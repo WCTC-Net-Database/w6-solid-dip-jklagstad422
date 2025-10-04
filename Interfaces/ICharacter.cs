@@ -1,11 +1,18 @@
-﻿using W6_SOLID_DIP.Interfaces;
+﻿using System.Collections.Generic;
 
-﻿namespace W6_assignment_template.Interfaces
+namespace W6_assignment_template.Interfaces
 {
     public interface ICharacter
     {
-        void Attack(ICharacter target);
-        void Move();
         string Name { get; set; }
+        int HitPoints { get; set; }
+        string Class { get; }
+        int Level { get; }
+
+        void MoveToRoom(IRoom room);
+        void PerformSpecialAction();
+        void Attack(ICharacter target, int damage);
+        void Heal(int healAmount);
+        void TakeTurn(ICharacter target);
     }
 }

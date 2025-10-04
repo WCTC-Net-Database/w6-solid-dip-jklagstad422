@@ -1,25 +1,46 @@
-﻿using W6_assignment_template.Interfaces;
+﻿using System;
+using W6_assignment_template.Interfaces;
 
 namespace W6_assignment_template.Models
 {
-    public class Ghost : CharacterBase, IFlyable
+    public class Ghost : CharacterBase
     {
-        public string Treasure { get; set; }
+        public bool IsHostile { get; private set; } = true;
+        private readonly Random _random = new Random();
 
-        public Ghost(string name, string type, int level, int hp, string treasure)
-            : base(name, type, level, hp)
+        public Ghost(int hitPoints, int level, IRoom startingRoom)
+            : base("Wandering Ghost", hitPoints, "Ethereal", level, startingRoom)
         {
-            Treasure = treasure;
         }
+
+  
+        public Ghost() : base("Wandering Ghost", 0, "Ethereal", 1, null) { }
 
         public void Fly()
         {
-            Console.WriteLine($"{Name} flies rapidly through the air.");
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.WriteLine($"{Name} phases through the wall!");
+            Console.ResetColor();
         }
 
-        public override void UniqueBehavior()
+        public override void PerformSpecialAction()
         {
-            throw new NotImplementedException();
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.WriteLine($"{Name} unleashes a chilling, debilitating moan!");
+            Console.ResetColor();
+        }
+
+        public override void TakeTurn(ICharacter target)
+        {
+            if (HitPoints <= 0) return;
+
+            if (IsHostile)
+            {
+                Fly();
+                PerformSpecialAction();
+                int damage = _random.Next(10, 20);
+                base.Attack(target, damage);
+            }
         }
     }
 }

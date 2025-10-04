@@ -1,23 +1,17 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using W6_assignment_template.Data;
+﻿using W6_assignment_template.Interfaces;
+using W6_assignment_template.Data; 
 using W6_assignment_template.Services;
 
-namespace W6_assignment_template
+public class Program
 {
-    class Program
+    public static void Main()
     {
-        static void Main(string[] args)
-        {
-            var serviceCollection = new ServiceCollection();
-            ConfigureServices(serviceCollection);
+ 
+        IContext context = new GameContext();
 
-            var serviceProvider = serviceCollection.BuildServiceProvider();
-            var gameEngine = serviceProvider.GetService<GameEngine>();
 
-            gameEngine?.Run();
-        }
+        GameEngine engine = new GameEngine(context);
 
-        private static void ConfigureServices(IServiceCollection services)
-        {
+        engine.Run();
     }
 }
