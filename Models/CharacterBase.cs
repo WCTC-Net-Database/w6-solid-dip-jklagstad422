@@ -24,24 +24,6 @@ namespace W6_assignment_template.Models
             Console.ForegroundColor = ConsoleColor.Blue;
             Console.WriteLine($"{Name} attacks {target.Name}");
             Console.ResetColor();
-
-            if (this is Player player && target is ILootable targetWithTreasure && !string.IsNullOrEmpty(targetWithTreasure.Treasure))
-            {
-                Console.WriteLine($"{Name} takes {targetWithTreasure.Treasure} from {target.Name}");
-                player.Gold += 10; // Assuming each treasure is worth 10 gold
-                targetWithTreasure.Treasure = null; // Treasure is taken
-            }
-            else if (this is Player playerWithGold && target is Player targetWithGold && targetWithGold.Gold > 0)
-            {
-                Console.WriteLine($"{Name} takes gold from {target.Name}");
-                playerWithGold.Gold += targetWithGold.Gold;
-                targetWithGold.Gold = 0; // Gold is taken
-            }
-        }
-
-        public void Move()
-        {
-            Console.WriteLine($"{Name} moves.");
         }
 
         // Abstract method for unique behavior to be implemented by derived classes

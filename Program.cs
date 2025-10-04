@@ -19,8 +19,5 @@ namespace W6_assignment_template
 
         private static void ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton<IContext, DataContext>();
-            services.AddTransient<GameEngine>();
-        }
     }
 }
